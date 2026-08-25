@@ -1,0 +1,119 @@
+# ============================================================================
+# AegisFlow — .gitignore
+# Safety-first ignore list. Anything that could contain secrets, keys, tokens,
+# customer data, or local machine specifics is excluded so the project can be
+# uploaded to a public GitHub repository without leaking private information.
+# ============================================================================
+
+# ---------------------------------------------------------------------------
+# Secrets & credentials — NEVER commit these
+# ---------------------------------------------------------------------------
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.jceks
+!tests/fixtures/*.pem           # exception: allow test PKI fixtures if added
+!deploy/dev-certs/README.md     # exception: keep the README, not the certs
+*.env
+.env
+.env.*
+!.env.example
+!/.env.example                   # keep the example template, with dummy values only
+*.secret
+*.token
+*id_rsa*
+*id_ed25519*
+credentials.json
+service-account*.json
+secrets.yaml
+vault-token
+.aws/credentials
+.gcp/
+kubeconfig
+*config.local.*
+*.local
+
+# ---------------------------------------------------------------------------
+# Config files that may embed credentials / machine-specific paths
+# ---------------------------------------------------------------------------
+config.local.yaml
+config.local.json
+settings.local.py
+application-local.yml
+*.local.yaml
+*.local.json
+
+# ---------------------------------------------------------------------------
+# Runtime data — customer data, telemetry, databases (RPO-sensitive)
+# ---------------------------------------------------------------------------
+data/
+*.db
+*.sqlite
+*.sqlite3
+*.ldb
+*.sst
+*.log
+logs/
+run/
+tmp/
+*.pid
+*.lock
+.blob
+# never commit real event/audit payloads
+samples/real/
+!samples/**/*.md
+
+# ---------------------------------------------------------------------------
+# Product-generated ephemeral artifacts
+# ---------------------------------------------------------------------------
+dist/
+build/
+*.egg-info/
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.hypothesis/
+
+# ---------------------------------------------------------------------------
+# IDE / OS cruft
+# ---------------------------------------------------------------------------
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+
+# ---------------------------------------------------------------------------
+# Anything that names the local developer / machine
+# ---------------------------------------------------------------------------
+*.user
+*.suo
+
+# ---------------------------------------------------------------------------
+# Keep checked-in markdown/docs (source of truth); see file-comment exceptions.
+# The audit chain demo below is smoke-test output, never real evidence.
+# ---------------------------------------------------------------------------
+audit-store/
+.example-audit/
+.run-audit/
+
+# ---------------------------------------------------------------------------
+# Source requirement / prompt files — not for public GitHub (may embed private
+# context from the task); keep the implementation public, keep the brief local.
+# ---------------------------------------------------------------------------
+cybersecurity_project_prompt.txt
+*_prompt.txt
+task_brief*.txt

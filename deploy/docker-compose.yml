@@ -1,0 +1,45 @@
+# AegisFlow — 私有化/演示一键编排（on-premise 组合）
+#
+# 说明：
+#   - 演示模式（dev）适合本地快速起一个节点。
+#   - 生产需要：外部 KMS（Vault/KMS）、TLS 证书/CA（mTLS）、持久化事件总线、
+#     以及多节点 Active-Active（见 docs/05-deployment-ops.md）。
+#   - 本 compose 只演示「单节点 + 配置切换」，不隐含生产级多活。
+#
+# 用法：
+#   docker compose up      # 起 management plane（默认 http，demo token）
+# 环境变量从 .env 读取（务必先 cp .env.example .env 并填真实值）。
+
+services:
+  aegisflow:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: aegisflow:dev
+    container_name: aegisflow-mgmt
+    restart: unless-stopped
+    env_file:
+      - ../.env          # 注意：.env 已被 gitignore，提交到仓库的是 .env.example
+    environment:
+      AEGISFLOW_MODE: "${AEGISFLOW_MODE:-onprem}"
+      AEGISFLOW_API_PORT: "8080"
+      AEGISFLOW_INGEST_PORT: "9090"
+      AEGISFLOW_AUDIT_DIR: "/data/audit"
+      AEGISFLOW_KMS_PROVIDER: "${AEGISFLOW_KMS_PROVIDER:-local}"
+    ports:
+      - "8080:8080"
+      - "9090:9090"
+    volumes:
+      # 审计链等运行时数据持久化；生产应对接异地容灾存储
+      - aegisflow-data:/data
+    # 生产环境把以下挂载指向真实的 mTLS 证书目录
+    # - ./certs:/etc/aegisflow/certs:ro
+    command: ["aegisflow", "serve"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8080/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  aegisflow-data:

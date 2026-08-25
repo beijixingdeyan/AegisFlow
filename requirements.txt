@@ -1,0 +1,3 @@
+# Core runtime dependencies (stdlib-first so demos & tests run anywhere).
+# No third-party package is required for the core engine or the test suite.
+# Optional extras (ML, Web, tests) are declared in pyproject.toml.
